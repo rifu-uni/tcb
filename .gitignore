@@ -1,0 +1,11 @@
+# pixi environments
+.pixi
+
+# macOS
+**/.DS_Store
+
+# Jupyter
+**/.ipynb_checkpoints/
+
+__pycache__/
+*.pyc

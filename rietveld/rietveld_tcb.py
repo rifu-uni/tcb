@@ -9,7 +9,7 @@ Caglioti FWHM(2-theta), Chebyshev background, per-phase lattice parameters and
 zero shift. Phase scales + background solved by linear least squares inside
 each nonlinear step (variable projection); scales constrained non-negative.
 
-Run from the ``tcb/`` directory:  python rietveld/rietveld_tcb.py
+Run from the repository root:  python rietveld/rietveld_tcb.py
 """
 from pathlib import Path
 import json
