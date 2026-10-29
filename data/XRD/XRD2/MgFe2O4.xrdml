@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xrdMeasurements xmlns="http://www.xrdml.com/XRDMeasurement/1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xrdml.com/XRDMeasurement/1.3 http://www.xrdml.com/XRDMeasurement/1.3/XRDMeasurement.xsd" status="Completed" sampleMode="Reflection">
+<xrdMeasurements xmlns="http://www.xrdml.com/XRDMeasurement/1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xrdml.com/XRDMeasurement/1.3 http://www.xrdml.com/XRDMeasurement/1.3/XRDMeasurement.xsd" status="Completed">
 	<comment>
 		<entry>Converted from Bruker .brml; scan mode=Continuous PSD fast</entry>
 		<entry>Operator=D8 Controler</entry>
@@ -23,7 +23,10 @@
 				<anodeMaterial>Cu</anodeMaterial>
 			</xRayTube>
 		</incidentBeamPath>
-		<scan appendNumber="0" mode="Continuous" scanAxis="TwoTheta" status="Completed">
+		<sampleOffset>
+			<position axis="2Theta" unit="deg">0.0000</position>
+		</sampleOffset>
+		<scan appendNumber="0" mode="Continuous" scanAxis="2Theta" status="Completed">
 			<header>
 				<startTimeStamp>2026-10-14T10:10:57.6695177-05:00</startTimeStamp>
 				<endTimeStamp>2026-10-14T10:26:17.9217587-05:00</endTimeStamp>

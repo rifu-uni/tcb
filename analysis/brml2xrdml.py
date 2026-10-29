@@ -9,7 +9,9 @@ Usage:
     pixi run python analysis/brml2xrdml.py data/XRD/XRD1/MgFe2O4.brml
     pixi run python analysis/brml2xrdml.py data/XRD/XRD*/*.brml --xy
 
-The .xrdml (and optional .xy) is written next to each .brml file.
+The .xrdml (and optional .xy) is written next to each .brml file. Pass
+--scan-axis Omega-2Theta only if HighScore Plus rejects the default 2Theta axis
+for your scan (e.g. rocking curves).
 """
 
 from __future__ import annotations
@@ -21,6 +23,11 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 XRDML_NAMESPACE = "http://www.xrdml.com/XRDMeasurement/1.3"
+
+# HighScore Plus rejects any scanAxis it does not know with the message
+# "Scan axis not supported". PANalytical writes the coupled theta/2theta scan
+# axis as "2Theta"; Bruker's spelling ("TwoTheta", "LockedCoupled") is invalid.
+DEFAULT_SCAN_AXIS = "2Theta"
 
 # Bruker reports the Cu K-beta line nowhere in these files; the constant below
 # is the standard Cu K-beta value used by every .xrdml producer.
@@ -127,9 +134,9 @@ def parse_scan(brml_path: Path) -> Scan:
     )
 
 
-def render_xrdml(scan: Scan) -> str:
+def render_xrdml(scan: Scan, scan_axis: str) -> str:
     return f"""<?xml version="1.0" encoding="UTF-8"?>
-<xrdMeasurements xmlns="{XRDML_NAMESPACE}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="{XRDML_NAMESPACE} {XRDML_NAMESPACE}/XRDMeasurement.xsd" status="Completed" sampleMode="Reflection">
+<xrdMeasurements xmlns="{XRDML_NAMESPACE}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="{XRDML_NAMESPACE} {XRDML_NAMESPACE}/XRDMeasurement.xsd" status="Completed">
 \t<comment>
 \t\t<entry>Converted from Bruker .brml; scan mode={scan.scan_mode}</entry>
 \t\t<entry>Operator={scan.operator}</entry>
@@ -153,7 +160,10 @@ def render_xrdml(scan: Scan) -> str:
 \t\t\t\t<anodeMaterial>Cu</anodeMaterial>
 \t\t\t</xRayTube>
 \t\t</incidentBeamPath>
-\t\t<scan appendNumber="0" mode="Continuous" scanAxis="TwoTheta" status="Completed">
+\t\t<sampleOffset>
+\t\t\t<position axis="2Theta" unit="deg">0.0000</position>
+\t\t</sampleOffset>
+\t\t<scan appendNumber="0" mode="Continuous" scanAxis="{scan_axis}" status="Completed">
 \t\t\t<header>
 \t\t\t\t<startTimeStamp>{scan.started}</startTimeStamp>
 \t\t\t\t<endTimeStamp>{scan.finished}</endTimeStamp>
@@ -181,10 +191,10 @@ def render_xy(scan: Scan) -> str:
     return "".join(f"{angle} {count}\n" for angle, count in rows)
 
 
-def convert(brml_path: Path, also_xy: bool) -> tuple[Scan, tuple[Path, ...]]:
+def convert(brml_path: Path, also_xy: bool, scan_axis: str) -> tuple[Scan, tuple[Path, ...]]:
     scan = parse_scan(brml_path)
     xrdml_path = brml_path.with_suffix(".xrdml")
-    xrdml_path.write_text(render_xrdml(scan), encoding="utf-8")
+    xrdml_path.write_text(render_xrdml(scan, scan_axis), encoding="utf-8")
     written = [xrdml_path]
     if also_xy:
         xy_path = brml_path.with_suffix(".xy")
@@ -195,14 +205,27 @@ def convert(brml_path: Path, also_xy: bool) -> tuple[Scan, tuple[Path, ...]]:
 
 def main(argv: list[str]) -> int:
     also_xy = "--xy" in argv
-    sources = [Path(arg) for arg in argv if not arg.startswith("-")]
+    scan_axis = DEFAULT_SCAN_AXIS
+    if "--scan-axis" in argv:
+        index = argv.index("--scan-axis")
+        if index + 1 == len(argv):
+            print("--scan-axis needs a value, e.g. --scan-axis Omega-2Theta", file=sys.stderr)
+            return 2
+        scan_axis = argv[index + 1]
+
+    options_with_values = {"--scan-axis"}
+    sources = [
+        Path(arg)
+        for index, arg in enumerate(argv)
+        if not arg.startswith("-") and argv[index - 1] not in options_with_values
+    ]
     if not sources:
         print(__doc__, file=sys.stderr)
         return 2
 
     for source in sources:
         try:
-            scan, written = convert(source, also_xy)
+            scan, written = convert(source, also_xy, scan_axis)
         except (BrmlError, zipfile.BadZipFile) as error:
             print(f"{source}: {error}", file=sys.stderr)
             return 1
