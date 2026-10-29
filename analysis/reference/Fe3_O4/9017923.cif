@@ -1,0 +1,282 @@
+#------------------------------------------------------------------------------
+#$Date: 2023-05-10 20:44:19 +0300 (Wed, 10 May 2023) $
+#$Revision: 283658 $
+#$URL: svn://www.crystallography.net/cod/cif/9/00/00/9000000.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided the American Mineralogist Crystal Structure Database,
+# http://rruff.geo.arizona.edu/AMS/amcsd.php
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_9017923
+loop_
+_publ_author_name
+'Fleet, M. E.'
+_publ_section_title
+;
+ The structure of magnetite: Symmetry of cubic spinels
+ Note: Sample 633,MT1B, annealed at 1373 K
+;
+_journal_name_full               'Journal of Solid State Chemistry'
+_journal_page_first              75
+_journal_page_last               82
+_journal_paper_doi               10.1016/0022-4596(86)90218-5
+_journal_volume                  62
+_journal_year                    1986
+_chemical_compound_source        'Natural, not provided'
+_chemical_formula_sum            'Fe3 O4'
+_chemical_name_mineral           Magnetite
+_space_group_IT_number           227
+_space_group_name_Hall           'F 4d 2 3 -1d'
+_space_group_name_H-M_alt        'F d -3 m :1'
+_symmetry_space_group_name_H-M   'F d -3 m :1'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_length_a                   8.3969
+_cell_length_b                   8.3969
+_cell_length_c                   8.3969
+_cell_formula_units_Z            8
+_cell_volume                     592.048
+_database_code_amcsd             0020589
+_exptl_crystal_density_diffrn    5.195
+_exptl_crystal_thermal_history   'annealed at 1373 K'
+_cod_data_source_file            16795.cif
+_cod_data_source_block           16795
+_cod_original_sg_symbol_H-M      'F d 3 m'
+_cod_database_code               9017923
+loop_
+_space_group_symop_operation_xyz
+x,y,z
+x,1/2+y,1/2+z
+1/2+x,y,1/2+z
+1/2+x,1/2+y,z
+3/4+z,3/4-x,1/4+y
+3/4+z,1/4-x,3/4+y
+1/4+z,3/4-x,3/4+y
+1/4+z,1/4-x,1/4+y
+-y,1/2+z,1/2-x
+-y,+z,-x
+1/2-y,1/2+z,-x
+1/2-y,+z,1/2-x
+3/4+x,3/4-y,1/4+z
+3/4+x,1/4-y,3/4+z
+1/4+x,3/4-y,3/4+z
+1/4+x,1/4-y,1/4+z
+-z,1/2+x,1/2-y
+-z,+x,-y
+1/2-z,1/2+x,-y
+1/2-z,+x,1/2-y
+3/4+y,3/4-z,1/4+x
+3/4+y,1/4-z,3/4+x
+1/4+y,3/4-z,3/4+x
+1/4+y,1/4-z,1/4+x
+-x,1/2+y,1/2-z
+-x,+y,-z
+1/2-x,1/2+y,-z
+1/2-x,+y,1/2-z
+1/2+x,-z,1/2-y
+1/2+x,1/2-z,-y
++x,-z,-y
++x,1/2-z,1/2-y
+3/4-z,3/4+y,1/4+x
+3/4-z,1/4+y,3/4+x
+1/4-z,3/4+y,3/4+x
+1/4-z,1/4+y,1/4+x
+1/2+y,-x,1/2-z
+1/2+y,1/2-x,-z
++y,-x,-z
++y,1/2-x,1/2-z
+3/4-x,3/4+z,1/4+y
+3/4-x,1/4+z,3/4+y
+1/4-x,3/4+z,3/4+y
+1/4-x,1/4+z,1/4+y
+1/2+z,-y,1/2-x
+1/2+z,1/2-y,-x
++z,-y,-x
++z,1/2-y,1/2-x
+3/4-y,3/4+x,1/4+z
+3/4-y,1/4+x,3/4+z
+1/4-y,3/4+x,3/4+z
+1/4-y,1/4+x,1/4+z
+x,1/2+z,1/2+y
+x,+z,+y
+1/2+x,1/2+z,+y
+1/2+x,+z,1/2+y
+1/4-z,3/4-y,3/4-x
+1/4-z,1/4-y,1/4-x
+3/4-z,3/4-y,1/4-x
+3/4-z,1/4-y,3/4-x
+y,1/2+x,1/2+z
+y,+x,+z
+1/2+y,1/2+x,+z
+1/2+y,+x,1/2+z
+1/4-x,3/4-z,3/4-y
+1/4-x,1/4-z,1/4-y
+3/4-x,3/4-z,1/4-y
+3/4-x,1/4-z,3/4-y
+z,1/2+y,1/2+x
+z,+y,+x
+1/2+z,1/2+y,+x
+1/2+z,+y,1/2+x
+1/4-y,3/4-x,3/4-z
+1/4-y,1/4-x,1/4-z
+3/4-y,3/4-x,1/4-z
+3/4-y,1/4-x,3/4-z
+3/4+z,1/4+x,3/4-y
+3/4+z,3/4+x,1/4-y
+1/4+z,1/4+x,1/4-y
+1/4+z,3/4+x,3/4-y
+-y,1/2-z,1/2+x
+-y,-z,+x
+1/2-y,1/2-z,+x
+1/2-y,-z,1/2+x
+3/4+x,1/4+y,3/4-z
+3/4+x,3/4+y,1/4-z
+1/4+x,1/4+y,1/4-z
+1/4+x,3/4+y,3/4-z
+-z,1/2-x,1/2+y
+-z,-x,+y
+1/2-z,1/2-x,+y
+1/2-z,-x,1/2+y
+3/4+y,1/4+z,3/4-x
+3/4+y,3/4+z,1/4-x
+1/4+y,1/4+z,1/4-x
+1/4+y,3/4+z,3/4-x
+-x,1/2-y,1/2+z
+-x,-y,+z
+1/2-x,1/2-y,+z
+1/2-x,-y,1/2+z
+1/4-z,3/4+x,3/4+y
+1/4-z,1/4+x,1/4+y
+3/4-z,3/4+x,1/4+y
+3/4-z,1/4+x,3/4+y
+y,-z,-x
+y,1/2-z,1/2-x
+1/2+y,-z,1/2-x
+1/2+y,1/2-z,-x
+1/4-x,3/4+y,3/4+z
+1/4-x,1/4+y,1/4+z
+3/4-x,3/4+y,1/4+z
+3/4-x,1/4+y,3/4+z
+z,-x,-y
+z,1/2-x,1/2-y
+1/2+z,-x,1/2-y
+1/2+z,1/2-x,-y
+1/4-y,3/4+z,3/4+x
+1/4-y,1/4+z,1/4+x
+3/4-y,3/4+z,1/4+x
+3/4-y,1/4+z,3/4+x
+x,-y,-z
+x,1/2-y,1/2-z
+1/2+x,-y,1/2-z
+1/2+x,1/2-y,-z
+1/2-x,1/2+z,-y
+1/2-x,+z,1/2-y
+-x,1/2+z,1/2-y
+-x,+z,-y
+1/4+z,3/4-y,3/4+x
+1/4+z,1/4-y,1/4+x
+3/4+z,3/4-y,1/4+x
+3/4+z,1/4-y,3/4+x
+1/2-y,1/2+x,-z
+1/2-y,+x,1/2-z
+-y,1/2+x,1/2-z
+-y,+x,-z
+1/4+x,3/4-z,3/4+y
+1/4+x,1/4-z,1/4+y
+3/4+x,3/4-z,1/4+y
+3/4+x,1/4-z,3/4+y
+1/2-z,1/2+y,-x
+1/2-z,+y,1/2-x
+-z,1/2+y,1/2-x
+-z,+y,-x
+1/4+y,3/4-x,3/4+z
+1/4+y,1/4-x,1/4+z
+3/4+y,3/4-x,1/4+z
+3/4+y,1/4-x,3/4+z
+-x,-z,y
+-x,1/2-z,1/2+y
+1/2-x,-z,1/2+y
+1/2-x,1/2-z,y
+3/4+z,3/4+y,1/4-x
+3/4+z,1/4+y,3/4-x
+1/4+z,3/4+y,3/4-x
+1/4+z,1/4+y,1/4-x
+-y,-x,z
+-y,1/2-x,1/2+z
+1/2-y,-x,1/2+z
+1/2-y,1/2-x,z
+3/4+x,3/4+z,1/4-y
+3/4+x,1/4+z,3/4-y
+1/4+x,3/4+z,3/4-y
+1/4+x,1/4+z,1/4-y
+-z,-y,x
+-z,1/2-y,1/2+x
+1/2-z,-y,1/2+x
+1/2-z,1/2-y,x
+3/4+y,3/4+x,1/4-z
+3/4+y,1/4+x,3/4-z
+1/4+y,3/4+x,3/4-z
+1/4+y,1/4+x,1/4-z
+1/4-z,1/4-x,1/4-y
+1/4-z,3/4-x,3/4-y
+3/4-z,1/4-x,3/4-y
+3/4-z,3/4-x,1/4-y
+y,z,x
+y,1/2+z,1/2+x
+1/2+y,z,1/2+x
+1/2+y,1/2+z,x
+1/4-x,1/4-y,1/4-z
+1/4-x,3/4-y,3/4-z
+3/4-x,1/4-y,3/4-z
+3/4-x,3/4-y,1/4-z
+z,x,y
+z,1/2+x,1/2+y
+1/2+z,x,1/2+y
+1/2+z,1/2+x,y
+1/4-y,1/4-z,1/4-x
+1/4-y,3/4-z,3/4-x
+3/4-y,1/4-z,3/4-x
+3/4-y,3/4-z,1/4-x
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Fe1 0.00489 0.00489 0.00489 0.00000 0.00000 0.00000
+Fe2 0.00636 0.00636 0.00636 0.00071 0.00071 0.00071
+O1 0.00750 0.00750 0.00750 -0.00036 -0.00036 -0.00036
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_type_symbol
+_atom_site_attached_hydrogens
+Fe1 0.00000 0.00000 0.00000 0.00507 Fe 0
+Fe2 0.62500 0.62500 0.62500 0.00637 Fe 0
+O1 0.37972 0.37972 0.37972 0.00760 O 0
+loop_
+_cod_changelog_entry_id
+_cod_changelog_entry_author
+_cod_changelog_entry_date
+_cod_changelog_entry_text
+1
+;cod-tools version 3.8.0
+Id: cif_guess_AMCSD_atom_types 9700 2023-11-12 09:07:41Z saulius
+;
+2023-11-22T11:51:52+02:00
+;Derived atom types and hydrogen counts
+from atom names that follow the AMCSD naming convention
+(Wat == water, O-H == hydroxyl).
+;
