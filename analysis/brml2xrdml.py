@@ -9,9 +9,12 @@ Usage:
     pixi run python analysis/brml2xrdml.py data/XRD/XRD1/MgFe2O4.brml
     pixi run python analysis/brml2xrdml.py data/XRD/XRD*/*.brml --xy
 
-The .xrdml (and optional .xy) is written next to each .brml file. Pass
---scan-axis Omega-2Theta only if HighScore Plus rejects the default 2Theta axis
-for your scan (e.g. rocking curves).
+The .xrdml (and optional .xy) is written next to each .brml file.
+
+Scan axes follow PANalytical naming, not Bruker naming: a coupled theta/2theta
+scan is "Gonio" in XRDML (positions reported as 2Theta). HighScore Plus 3.0
+rejects anything else as "scan axis not supported" / "position of scan axis not
+found". Pass --scan-axis to override for non-powder scans.
 """
 
 from __future__ import annotations
@@ -24,15 +27,25 @@ from xml.etree import ElementTree
 
 XRDML_NAMESPACE = "http://www.xrdml.com/XRDMeasurement/1.3"
 
-# HighScore Plus rejects any scanAxis it does not know with the message
-# "Scan axis not supported". PANalytical writes the coupled theta/2theta scan
-# axis as "2Theta"; Bruker's spelling ("TwoTheta", "LockedCoupled") is invalid.
-DEFAULT_SCAN_AXIS = "2Theta"
-
 # Bruker reports the Cu K-beta line nowhere in these files; the constant below
 # is the standard Cu K-beta value used by every .xrdml producer.
 CU_K_BETA_ANGSTROM = "1.3922500"
 K_ALPHA2_TO_K_ALPHA1_RATIO = "0.5000"
+
+# XRDML scan axis names accepted by HighScore Plus 3.0. A Bruker "LockedCoupled"
+# theta/2theta scan is XRDML "Gonio" (X'Pert Data Collector writes exactly this
+# pairing with <positions axis="2Theta">).
+DEFAULT_SCAN_AXIS = "2Theta"
+BRUKER_SCAN_AXIS_TO_XRDML = {
+    "LockedCoupled": "Gonio",
+}
+XRDML_SCAN_AXIS_POSITION_AXIS = {
+    "Gonio": "2Theta",
+}
+
+# Serialised 2Theta values are rounded to 4 decimals, so neighbouring steps
+# differ by up to 5e-5 deg even for a constant-increment scan.
+UNIFORM_STEP_TOLERANCE_DEG = 1e-3
 
 
 class BrmlError(Exception):
@@ -47,6 +60,7 @@ class Scan:
     counts: tuple[str, ...]
     counting_time_seconds: str
     scan_mode: str
+    scan_name: str
     wavelength_alpha1_angstrom: str
     wavelength_alpha2_angstrom: str
     tube_tension_kv: str
@@ -56,6 +70,7 @@ class Scan:
     sample_id: str
     started: str
     finished: str
+    is_uniform_scan: bool
 
 
 def archive_member(archive: zipfile.ZipFile, suffix: str) -> bytes:
@@ -91,6 +106,14 @@ def optional_text(root: ElementTree.Element, tag: str) -> str:
     return (element.text or "").strip() if element is not None else ""
 
 
+def is_uniform(angles: list[float]) -> bool:
+    if len(angles) < 3:
+        return True
+    steps = [later - earlier for earlier, later in zip(angles, angles[1:])]
+    median_step = sorted(steps)[len(steps) // 2]
+    return all(abs(step - median_step) < UNIFORM_STEP_TOLERANCE_DEG for step in steps)
+
+
 def parse_scan(brml_path: Path) -> Scan:
     if not brml_path.is_file():
         raise BrmlError(f"{brml_path} does not exist")
@@ -110,6 +133,10 @@ def parse_scan(brml_path: Path) -> Scan:
     if len(two_theta) != len(counts):
         raise BrmlError("two-theta and intensity columns differ in length")
 
+    angles = [float(value) for value in two_theta]
+    if any(later <= earlier for earlier, later in zip(angles, angles[1:])):
+        raise BrmlError("two-theta positions are not strictly increasing")
+
     scan_info = require(next(raw.iter("ScanInformation"), None), "<ScanInformation>")
     radius = next(
         (e.get("Value") for e in instruction.iter("Radius") if e.get("Value") not in (None, "0")),
@@ -122,6 +149,7 @@ def parse_scan(brml_path: Path) -> Scan:
         counts=counts,
         counting_time_seconds=text_of(raw, "TimePerStep"),
         scan_mode=text_of(scan_info, "ScanModeVisibleName"),
+        scan_name=scan_info.get("ScanName") or "",
         wavelength_alpha1_angstrom=value_of(instruction, "WaveLengthAlpha1"),
         wavelength_alpha2_angstrom=value_of(instruction, "WaveLengthAlpha2"),
         tube_tension_kv=value_of(instruction, "Voltage"),
@@ -131,10 +159,26 @@ def parse_scan(brml_path: Path) -> Scan:
         sample_id=next((e.get("Value") for e in measurement.iter("SampleId")), "") or "",
         started=optional_text(raw, "TimeStampStarted"),
         finished=optional_text(raw, "TimeStampFinished"),
+        is_uniform_scan=is_uniform(angles),
+    )
+
+
+def render_positions(scan: Scan, position_axis: str) -> str:
+    if scan.is_uniform_scan:
+        return (
+            f'<positions axis="{position_axis}" unit="deg">'
+            f"<startPosition>{scan.two_theta[0]}</startPosition>"
+            f"<endPosition>{scan.two_theta[-1]}</endPosition>"
+            "</positions>"
+        )
+    return (
+        f'<positions axis="{position_axis}" unit="deg">'
+        f'{" ".join(scan.two_theta)}</positions>'
     )
 
 
 def render_xrdml(scan: Scan, scan_axis: str) -> str:
+    position_axis = XRDML_SCAN_AXIS_POSITION_AXIS.get(scan_axis, "2Theta")
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <xrdMeasurements xmlns="{XRDML_NAMESPACE}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="{XRDML_NAMESPACE} {XRDML_NAMESPACE}/XRDMeasurement.xsd" status="Completed">
 \t<comment>
@@ -145,7 +189,7 @@ def render_xrdml(scan: Scan, scan_axis: str) -> str:
 \t\t<id>{scan.sample_id}</id>
 \t\t<name>{scan.sample_id}</name>
 \t</sample>
-\t<xrdMeasurement measurementType="Scan" status="Completed" sampleMode="Reflection">
+\t<xrdMeasurement measurementType="Scan" status="Completed">
 \t\t<usedWavelength intended="K-Alpha 1">
 \t\t\t<kAlpha1 unit="Angstrom">{scan.wavelength_alpha1_angstrom}</kAlpha1>
 \t\t\t<kAlpha2 unit="Angstrom">{scan.wavelength_alpha2_angstrom}</kAlpha2>
@@ -154,15 +198,15 @@ def render_xrdml(scan: Scan, scan_axis: str) -> str:
 \t\t</usedWavelength>
 \t\t<incidentBeamPath>
 \t\t\t<radius unit="mm">{scan.goniometer_radius_mm}</radius>
-\t\t\t<xRayTube name="Bruker D8 sealed tube">
+\t\t\t<xRayTube>
 \t\t\t\t<tension unit="kV">{scan.tube_tension_kv}</tension>
 \t\t\t\t<current unit="mA">{scan.tube_current_ma}</current>
 \t\t\t\t<anodeMaterial>Cu</anodeMaterial>
 \t\t\t</xRayTube>
 \t\t</incidentBeamPath>
-\t\t<sampleOffset>
-\t\t\t<position axis="2Theta" unit="deg">0.0000</position>
-\t\t</sampleOffset>
+\t\t<diffractedBeamPath>
+\t\t\t<radius unit="mm">{scan.goniometer_radius_mm}</radius>
+\t\t</diffractedBeamPath>
 \t\t<scan appendNumber="0" mode="Continuous" scanAxis="{scan_axis}" status="Completed">
 \t\t\t<header>
 \t\t\t\t<startTimeStamp>{scan.started}</startTimeStamp>
@@ -176,7 +220,7 @@ def render_xrdml(scan: Scan, scan_axis: str) -> str:
 \t\t\t\t</source>
 \t\t\t</header>
 \t\t\t<dataPoints>
-\t\t\t\t<positions axis="2Theta" unit="deg">{" ".join(scan.two_theta)}</positions>
+\t\t\t\t{render_positions(scan, position_axis)}
 \t\t\t\t<commonCountingTime unit="seconds">{scan.counting_time_seconds}</commonCountingTime>
 \t\t\t\t<intensities unit="counts">{" ".join(scan.counts)}</intensities>
 \t\t\t</dataPoints>
@@ -191,8 +235,18 @@ def render_xy(scan: Scan) -> str:
     return "".join(f"{angle} {count}\n" for angle, count in rows)
 
 
-def convert(brml_path: Path, also_xy: bool, scan_axis: str) -> tuple[Scan, tuple[Path, ...]]:
+def resolve_scan_axis(scan: Scan, requested: str | None) -> str:
+    if requested is not None:
+        return requested
+    return BRUKER_SCAN_AXIS_TO_XRDML.get(scan.scan_name, DEFAULT_SCAN_AXIS)
+
+
+def convert(
+    brml_path: Path, also_xy: bool, requested_scan_axis: str | None
+) -> tuple[Scan, str, tuple[Path, ...]]:
     scan = parse_scan(brml_path)
+    scan_axis = resolve_scan_axis(scan, requested_scan_axis)
+
     xrdml_path = brml_path.with_suffix(".xrdml")
     xrdml_path.write_text(render_xrdml(scan, scan_axis), encoding="utf-8")
     written = [xrdml_path]
@@ -200,24 +254,24 @@ def convert(brml_path: Path, also_xy: bool, scan_axis: str) -> tuple[Scan, tuple
         xy_path = brml_path.with_suffix(".xy")
         xy_path.write_text(render_xy(scan), encoding="utf-8")
         written.append(xy_path)
-    return scan, tuple(written)
+    return scan, scan_axis, tuple(written)
 
 
 def main(argv: list[str]) -> int:
     also_xy = "--xy" in argv
-    scan_axis = DEFAULT_SCAN_AXIS
+    requested_scan_axis = None
     if "--scan-axis" in argv:
         index = argv.index("--scan-axis")
         if index + 1 == len(argv):
-            print("--scan-axis needs a value, e.g. --scan-axis Omega-2Theta", file=sys.stderr)
+            print("--scan-axis needs a value, e.g. --scan-axis Gonio", file=sys.stderr)
             return 2
-        scan_axis = argv[index + 1]
+        requested_scan_axis = argv[index + 1]
 
     options_with_values = {"--scan-axis"}
     sources = [
-        Path(arg)
-        for index, arg in enumerate(argv)
-        if not arg.startswith("-") and argv[index - 1] not in options_with_values
+        Path(argument)
+        for index, argument in enumerate(argv)
+        if not argument.startswith("-") and argv[index - 1] not in options_with_values
     ]
     if not sources:
         print(__doc__, file=sys.stderr)
@@ -225,13 +279,14 @@ def main(argv: list[str]) -> int:
 
     for source in sources:
         try:
-            scan, written = convert(source, also_xy, scan_axis)
+            scan, scan_axis, written = convert(source, also_xy, requested_scan_axis)
         except (BrmlError, zipfile.BadZipFile) as error:
             print(f"{source}: {error}", file=sys.stderr)
             return 1
         print(
             f"{source} -> {', '.join(str(path) for path in written)} "
-            f"({len(scan.counts)} points, Ka1={scan.wavelength_alpha1_angstrom} A, "
+            f"({len(scan.counts)} points, scanAxis={scan_axis}, "
+            f"Ka1={scan.wavelength_alpha1_angstrom} A, "
             f"{scan.counting_time_seconds} s/step)"
         )
     return 0
