@@ -147,35 +147,35 @@ El tamaño de grano promedio es de $141 \pm 2.4$ nm (mediana $132$ nm, $N = 936$
 Reflectancia difusa UV-Vis-NIR (esfera integradora): espectro limpio, an\'alisis Kubelka--Munk y gr\'aficas de Tauc con dos l\'ineas (dos fases), ver Secci\'on~\ref{sec:analisis} y Fig.~\ref{fig:tauc}.
 
 \subsection{XDR}
-Difractogramas en $2\theta = 20$--$80^\circ$ (400\ \textdegree C) y $10$--$75^\circ$ (600\ \textdegree C): identificaci\'on de fases, refinamiento Rietveld de dos fases y tama\~no de cristalito, ver Secci\'on~\ref{sec:analisis} y Figs.~\ref{fig:xrdfit}--\ref{fig:xrdsize}.
+Difractogramas en $2\theta = 20$--$80^\circ$ (400\ \textdegree C) y $10$--$75^\circ$ (600\ \textdegree C): identificaci\'on de fases, refinamiento Rietveld de dos fases y tama\~no de cristalito, ver Secci\'on~\ref{sec:analisis} y Figs.~\ref{fig:hxpfit}--\ref{fig:xrdsize}.
 
 \section{An\'alisis}
 \label{sec:analisis}
 
-El an\'alisis cuantitativo completo (extracci\'on de datos, limpieza, ajustes e incertidumbres) est\'a documentado en los cuadernos de Jupyter \texttt{sem\_grain\_analysis.ipynb}, \texttt{xrd\_rietveld\_analysis.ipynb} y \texttt{uvvis\_analysis.ipynb} (directorio \texttt{analysis/notebooks}).
+El an\'alisis cuantitativo completo (extracci\'on de datos, limpieza, ajustes e incertidumbres) est\'a documentado en los cuadernos de Jupyter \texttt{sem\_grain\_analysis.ipynb}, \texttt{xrd\_rietveld\_analysis.ipynb} y \texttt{uvvis\_analysis.ipynb} (directorio \texttt{analysis/notebooks}); los proyectos de HighScore Plus con la cuantificaci\'on final est\'an en \texttt{analysis/highscore/400} y \texttt{analysis/highscore/600}.
 
 \subsection{Identificaci\'on de fases y cuantificaci\'on (DRX)}
 
-Los difractogramas (Cu K$\alpha$, $\lambda = 1.5406$ \r{A}) se extrajeron de los archivos \texttt{.brml} del D8 Advance, se les eliminaron picos espurios de un solo canal del detector PSD y se les rest\'o el fondo con un polinomio iterativo (m\'etodo de recorte). La identificaci\'on de fases se realiz\'o comparando con las reflexiones calculadas a partir de los archivos CIF de referencia del repositorio. Ambas pasadas (400\ \textdegree C y 600\ \textdegree C) muestran una mezcla de hematita $\alpha$-Fe$_2$O$_3$ (grupo espacial $R\bar{3}c$, picos en $2\theta = 24.1^\circ, 33.2^\circ, 35.6^\circ, 49.5^\circ, 54.1^\circ, 62.5^\circ, 64.0^\circ$) y espinela $MgFe_2O_4$ (picos $30.1^\circ$ (220), $35.5^\circ$ (311), $43.1^\circ$ (400), $62.7^\circ$ (440)); no se detect\'o MgO ni Mg(OH)$_2$.
+Los difractogramas (Cu K$\alpha$, $\lambda = 1.5406$ \r{A}) se extrajeron de los archivos \texttt{.brml} del D8 Advance y se les eliminaron picos espurios de un solo canal del detector PSD. Para la identificaci\'on de picos y fases se rest\'o un fondo con un polinomio iterativo (m\'etodo de recorte); el refinamiento Rietveld, en cambio, se realiz\'o sobre los conteos crudos con un fondo polinomial modelado. Ambas pasadas (400\ \textdegree C y 600\ \textdegree C) muestran una mezcla de hematita y espinela. La identificaci\'on de fases se hizo con HighScore Plus 3.0 (PANalytical) usando las bases de referencia incluidas en el programa; las mejores coincidencias para cada pasada fueron hematita $\alpha$-Fe$_2$O$_3$ (grupo espacial $R\bar{3}c$, picos en $2\theta = 24.1^\circ, 33.2^\circ, 35.6^\circ, 49.5^\circ, 54.1^\circ, 62.5^\circ, 64.0^\circ$) y espinela MgFe$_2$O$_4$ (magnesioferrita; picos $30.1^\circ$ (220), $35.5^\circ$ (311), $43.1^\circ$ (400), $62.7^\circ$ (440)); no se detect\'o MgO ni Mg(OH)$_2$.
 
-El refinamiento Rietveld de dos fases se corri\'o con **EasyDiffraction 0.21.1** (motor Rietveld completo: perfil pseudo-Voigt con ensanchamiento TCH $U/V/W$, dublete K$\alpha_1$/K$\alpha_2$, fondo Chebyshev de 6 t\'erminos, escala y celdas por fase, corrimiento cero, pesos $\sqrt{y}$), sobre los conteos crudos; \texttt{xrd\_rietveld\_analysis.ipynb} contiene el c\'odigo completo (celda 3b) y los resultados reproducidos. Los CIF de referencia se escogieron cribando cuantitativamente todas las estructuras del repositorio (`analysis/reference/`): \texttt{9015964.cif} (ICSD, $R\bar{3}c$, $a = 5.0356$ \r{A}) minimiza el costo de ajuste entre las hematitas y \texttt{9001446.cif} ($Fd\bar{3}m$, $a = 8.3805$ \r{A}) entre las espinelas; todas las espinelas comparten posiciones, diferenci\'andose solo en el grado de inversi\'on (intensidades 220/400). Las fracciones en peso se obtienen de las escalas con el factor est\'andar de Hill--Howard $W_p \propto S_p\,Z_p M_p V_p$. La Tabla~\ref{tab:fases} reporta los valores de EasyDiffraction (cuantificaci\'on de referencia) junto con la validaci\'on cruzada de un modelo m\'inimo in-house (pseudo-Voigt $\eta=0.3$, un FWHM por patr\'on, pesos $1/\max(I,1)$), que reproduce las mismas fases y celdas (dentro de $\approx 0.02$ \r{A}) con $R_{wp} = 1.08$--$1.30\%$. Los picos diagn\'osticos no superpuestos --- hematita 104 a $33.2^\circ$ y espinela 220/400 a $30.1^\circ/43.2^\circ$ --- fijan la dominancia de la hematita sin ambig\"uedad. La fracci\'on de espinela no cambia apreciablemente con la recalcinaci\'on a 600\ \textdegree C ($27.1 \rightarrow 24.7\%$ en peso); lo que mejora sensiblemente es la cristalinidad: el FWHM global cae de $0.474^\circ$ a $0.275^\circ$ y el tama\~no de cristalito crece de $\approx 18$ a $\approx 29$ nm.
+El refinamiento Rietveld de dos fases se corri\'o con \textbf{HighScore Plus 3.0} (PANalytical) sobre los conteos crudos, con perfil pseudo-Voigt, fondo polinomial, doblete K$\alpha_1$/K$\alpha_2$ (raz\'on 0.5), escala y celda por fase, corrimiento cero y par\'ametros de ancho $W$; las ocupaciones se fijaron a partir de las estructuras de referencia. Las fracciones en peso se obtuvieron de las escalas con el factor est\'andar de Hill--Howard $W_p \propto S_p\,Z_p M_p V_p$. La Tabla~\ref{tab:fases} resume los resultados de HighScore Plus. Las mejores coincidencias PDF usadas fueron 96-901-5066 (hematita) y 96-900-3781 (espinela) para 400\ \textdegree C, y 96-210-1170 (hematita) y 96-900-3774 (espinela) para 600\ \textdegree C. Un modelo m\'inimo in-house (pseudo-Voigt $\eta=0.3$, un FWHM por patr\'on, pesos $1/\max(I,1)$) se us\'o solo como control cualitativo: reprodujo las mismas fases y confirm\'o la dominancia de la hematita, pero no se us\'o para cuantificaci\'on. Los picos diagn\'osticos no superpuestos --- hematita 104 a $33.2^\circ$ y espinela 220/400 a $30.1^\circ/43.2^\circ$ --- fijan la dominancia de la hematita sin ambig\"uedad. La fracci\'on de espinela es $\approx 4$--$5\%$ en peso en ambas pasadas; la recalcinaci\'on a 600\ \textdegree C no produce un cambio apreciable en la fase mayoritaria. Lo que mejora sensiblemente es la cristalinidad: el FWHM global cae de $0.474^\circ$ a $0.275^\circ$ y el tama\~no de cristalito crece de $\approx 18$ a $\approx 29$ nm. El ajuste tiene $R_{wp}=1.46$--$1.54\%$ y GOF $\approx 0.72$; como el GOF es menor que 1, la incertidumbre estad\'istica es optimista y la incertidumbre real de las fracciones es mayor que la reportada.
 
 \begin{table}[H]
-\centering\small
-\caption{Cuantificaci\'on de fases (EasyDiffraction 0.21.1, factor Hill--Howard $ZMV$) y tama\~nos de cristalito (Cu K$\alpha$, $\lambda = 1.5406$ \r{A}).}
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Cuantificaci\'on de fases por Rietveld (HighScore Plus 3.0, factor Hill--Howard $S\,Z\,M\,V$) y an\'alisis de tama\~no de cristalito (Cu K$\alpha$, $\lambda = 1.5406$ \r{A}). Las fracciones y celdas provienen de HighScore Plus; FWHM y tama\~nos, del an\'alisis de picos.}
 \label{tab:fases}
 \begin{tabular}{lcc}
 \hline
  & XRD1 (400\ \textdegree C) & XRD2 (600\ \textdegree C) \\
 \hline
-Hematita (\% peso, EasyDiffraction) & $72.9$ & $75.3$ \\
-Espinela MgFe$_2$O$_4$ (\% peso, EasyDiffraction) & $27.1$ & $24.7$ \\
-$R_{wp}$ / $\chi^2$ (EasyDiffraction) & $3.92\%$ / $5.17$ & $5.27\%$ / $8.45$ \\
-$R_{wp}$ (modelo in-house) & $1.08\%$ & $1.30\%$ \\
-$a$ hematita (\r{A}, EasyDiffraction) & $5.0501$ & $5.0420$ \\
-$a$ espinela (\r{A}, EasyDiffraction) & $8.3979$ & $8.3906$ \\
-$a$ hematita / $a$ espinela (in-house, \r{A}) & $5.0349$ / $8.355$ & $5.0329$ / $8.370$ \\
-FWHM global ($^\\circ$) & $0.474$ & $0.275$ \\
+Hematita (\% peso) & $96.3$ & $95.3$ \\
+Espinela MgFe$_2$O$_4$ (\% peso) & $3.7$ & $4.7$ \\
+$R_{wp}$ / GOF & $1.46\%$ / $0.72$ & $1.54\%$ / $0.72$ \\
+$a$ hematita (\r{A}) & $5.0378(8)$ & $5.0358(4)$ \\
+$c$ hematita (\r{A}) & $13.759(3)$ & $13.746(1)$ \\
+$a$ espinela (\r{A}) & $8.350(3)$ & $8.381(5)$ \\
+FWHM global ($^\circ$) & $0.474$ & $0.275$ \\
 $D_{Scherrer}$ (nm) & $18.2 \pm 0.9$ & $28.7 \pm 1.6$ \\
 Williamson--Hall: $D$ (nm) & $21 \pm 5$ & $76 \pm 30$ \\
 Williamson--Hall: $\varepsilon$ & $0.0006 \pm 0.0010$ & $0.0019 \pm 0.0004$ \\
@@ -185,16 +185,9 @@ Williamson--Hall: $\varepsilon$ & $0.0006 \pm 0.0010$ & $0.0019 \pm 0.0004$ \\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{figs/xrd_easydiffraction.png}
-    \caption{Refinamiento Rietveld de dos fases con EasyDiffraction 0.21.1 (observado / calculado / diferencia) para ambas pasadas de DRX.}
-    \label{fig:edfit}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{figs/xrd_rietveld.png}
-    \caption{Validaci\'on cruzada: ajuste in-house de todo el patr\'on con dos fases (hematita + espinela) para ambas pasadas de DRX.}
-    \label{fig:xrdfit}
+    \includegraphics[width=\linewidth]{figs/xrd_highscore.png}
+    \caption{Perfiles de DRX observados y posiciones de Bragg de hematita y magnesioferrita refinadas con HighScore Plus 3.0 para XRD1 (400\ \textdegree C) y XRD2 (600\ \textdegree C). Las fracciones en peso se indican en cada panel.}
+    \label{fig:hxpfit}
 \end{figure}
 
 \subsection{Tama\~no de cristalito: Scherrer y Williamson--Hall}
@@ -203,11 +196,11 @@ El tama\~no de cristalito se obtuvo con la ecuaci\'on de Scherrer
 \begin{equation}
     D = \frac{K\,\lambda}{\beta\cos\theta} \approx \frac{0.9\,\lambda}{\beta\cos\theta}
 \end{equation}
-con $\beta = \sqrt{\mathrm{FWHM}^2 - \beta_{inst}^2}$ el ancho integral corregido por el ancho instrumental ($\beta_{inst} \approx 0.05^\\circ$ para D8/LynxEye). Para separar el efecto de microdeformaci\'on se us\'o el m\'etodo de Williamson--Hall,
+con $\beta = \sqrt{\mathrm{FWHM}^2 - \beta_{inst}^2}$ el ancho integral corregido por el ancho instrumental ($\beta_{inst} \approx 0.05^\circ$ para D8/LynxEye). Para separar el efecto de microdeformaci\'on se us\'o el m\'etodo de Williamson--Hall,
 \begin{equation}
     \beta\cos\theta = \frac{K\lambda}{D} + 4\varepsilon\sin\theta
 \end{equation}
-(con $\beta$ en radianes y $\lambda$ en \r{A}, $D$ en nm $= K\lambda/(\beta\cos\theta)\times 0.1$). Al graficar $\beta\cos\theta$ frente a $4\sin\theta/\lambda$, el **intercepto** es $K\lambda/D$ (tama\~no) y la **pendiente** es $\varepsilon\lambda$ (microdeformaci\'on). Los resultados por reflexi\'on (Tabla~\ref{tab:fases}) muestran crecimiento de $D \approx 18$ nm a $D \approx 29$ nm (Scherrer) con la recalcinaci\'on; en Williamson--Hall, a 600\ \textdegree C $D \approx 76 \pm 30$ nm y $\varepsilon \approx 0.0019 \pm 0.0004$, mientras que a 400\ \textdegree C la deformaci\'on no es resoluble ($\varepsilon = 0.0006 \pm 0.0010$, compatible con cero): el ensanchamiento est\'a dominado por el tama\~no de cristalito.
+(con $\beta$ en radianes y $\lambda$ en \r{A}, $D$ en nm $= K\lambda/(\beta\cos\theta)\times 0.1$). Al graficar $\beta\cos\theta$ frente a $4\sin\theta/\lambda$, el \textbf{intercepto} es $K\lambda/D$ (tama\~no) y la \textbf{pendiente} es $\varepsilon\lambda$ (microdeformaci\'on). Los resultados por reflexi\'on (Tabla~\ref{tab:fases}) muestran crecimiento de $D \approx 18$ nm a $D \approx 29$ nm (Scherrer) con la recalcinaci\'on; en Williamson--Hall, a 600\ \textdegree C $D \approx 76 \pm 30$ nm y $\varepsilon \approx 0.0019 \pm 0.0004$, mientras que a 400\ \textdegree C la deformaci\'on no es resoluble ($\varepsilon = 0.0006 \pm 0.0010$, compatible con cero): el ensanchamiento est\'a dominado por el tama\~no de cristalito.
 
 \begin{figure}[H]
     \centering
@@ -233,7 +226,7 @@ El tama\~no de grano de SEM ($\approx 130$--$140$ nm) es sistem\'aticamente mayo
 
 La cuantificaci\'on EDS (XFlash 410, 30 kV) embebida en el archivo \texttt{.spx} da Fe $62.3 \pm 2.6$ \% peso, O $35.7$ \% peso, C $5.7$ \% peso (atribuido principalmente a la cinta adhesiva de carbono) y Mg $0.9 \pm 1.1$ \% peso. Excluyendo el carbono, la composici\'on es Fe $63.0$ \%, O $36.1$ \%, Mg $0.9$ \% en peso. La relaci\'on m\'asica Fe:Mg medida ($\approx 69:1$) difiere de la estequiom\'etrica ($4.60:1$) porque la l\'inea Mg K$\alpha$ (1.253 keV) es pr\'oxima al l\'imite de detecci\'on y se solapa con el fondo bajo los picos de Fe, lo que subestima el Mg; adem\'as, el Mg$^{2+}$ es m\'ovil y puede perderse parcialmente en los lavados, en l\'inea con el exceso de hematita observado por DRX.
 
-En reflectancia UV-Vis-NIR (esfera integradora), el polvo presenta $R \approx 6.5\%$ en el visible 400--700 nm (pigmento oscuro caf\'e-rojizo), bordes de absorci\'on cerca de 770--795 nm (derivada $d[F(R)]/dE$: onsets a $1.56$ y $1.62$ eV) y una meseta NIR con $R \approx 0.37$ a 1500--2500 nm. La gr\'afica de Tauc muestra **dos l\'ineas rectas**, que corresponden a las **dos fases** cuantificadas por DRX, no a dos exponentes de un mismo borde: la l\'inea de la espinela MgFe$_2$O$_4$ a $E_g \approx 1.6$--$1.7$ eV ($1.63 \pm 0.02$ eV, ajuste con $n=1/2$ en 1.9--2.3 eV) y la l\'inea de la hematita $\alpha$-Fe$_2$O$_3$ a $E_g \approx 2.0$ eV ($2.00 \pm 0.03$ eV, ajuste con $n=2$ en 2.0--2.4 eV), en acuerdo con los valores de la literatura (hematita $\approx 2.0$--$2.2$ eV; MgFe$_2$O$_4$ $\approx 1.6$--$1.9$ eV). Al ser la hematita la fase mayoritaria, su se\~nal domina el espectro.
+En reflectancia UV-Vis-NIR (esfera integradora), el polvo presenta $R \approx 6.5\%$ en el visible 400--700 nm (pigmento oscuro caf\'e-rojizo), bordes de absorci\'on cerca de 770--795 nm (derivada $d[F(R)]/dE$: onsets a $1.56$ y $1.62$ eV) y una meseta NIR con $R \approx 0.37$ a 1500--2500 nm. La gr\'afica de Tauc muestra \textbf{dos l\'ineas rectas}, que corresponden a las \textbf{dos fases} cuantificadas por DRX, no a dos exponentes de un mismo borde: la l\'inea de la espinela MgFe$_2$O$_4$ a $E_g \approx 1.6$--$1.7$ eV ($1.63 \pm 0.02$ eV, ajuste con $n=1/2$ en 1.9--2.3 eV) y la l\'inea de la hematita $\alpha$-Fe$_2$O$_3$ a $E_g \approx 2.0$ eV ($2.00 \pm 0.03$ eV, ajuste con $n=2$ en 2.0--2.4 eV), en acuerdo con los valores de la literatura (hematita $\approx 2.0$--$2.2$ eV; MgFe$_2$O$_4$ $\approx 1.6$--$1.9$ eV). Al ser la hematita la fase mayoritaria, su se\~nal domina el espectro.
 
 \begin{figure}[H]
     \centering
@@ -252,8 +245,8 @@ En reflectancia UV-Vis-NIR (esfera integradora), el polvo presenta $R \approx 6.
 \subsection{S\'intesis de resultados}
 
 \begin{itemize}
-    \item La muestra s\'intetizada por co-precipitaci\'on y calcinada a 400\ \textdegree C / 600\ \textdegree C NO es espinela pura: es una mezcla $\approx 73$--$75\%$ hematita + $\approx 25$--$27\%$ espinela MgFe$_2$O$_4$ (Rietveld de dos fases con EasyDiffraction, $\chi^2 = 5.2$--$8.4$), coherente con el color caf\'e-rojizo y las dos l\'ineas del Tauc.
-    \item La recalcinaci\'on a 600\ \textdegree C no altera apreciablemente la fracci\'on de fases, pero mejora la cristalinidad: FWHM global $0.474^\circ \rightarrow 0.275^\circ$ y cristalitos de $\approx 18$ a $\approx 29$ nm (Scherrer); la microdeformaci\'on W--H pasa a ser mensurable ($\varepsilon \approx 0.0019$).
+    \item La muestra s\'intetizada por co-precipitaci\'on y calcinada a 400\ \textdegree C / 600\ \textdegree C NO es espinela pura: es una mezcla $\approx 95$--$96\%$ hematita + $\approx 4$--$5\%$ espinela MgFe$_2$O$_4$ (Rietveld de dos fases con HighScore Plus 3.0, $R_{wp}=1.46$--$1.54\%$, GOF $\approx 0.72$), coherente con el color caf\'e-rojizo y las dos l\'ineas del Tauc.
+    \item La recalcinaci\'on a 600\ \textdegree C no altera apreciablemente la fase mayoritaria; la espinela permanece minoritaria ($\approx 4$--$5\%$ en peso), pero mejora la cristalinidad: FWHM global $0.474^\circ \rightarrow 0.275^\circ$ y cristalitos de $\approx 18$ a $\approx 29$ nm (Scherrer); la microdeformaci\'on W--H pasa a ser mensurable ($\varepsilon \approx 0.0019$).
     \item Los granos de SEM (media $141 \pm 2.4$ nm, mediana $132$ nm) son aglomerados de $\sim$5--7 cristalitos DRX.
     \item El Tauc muestra dos l\'ineas = dos fases: espinela $\approx 1.6$ eV y hematita $\approx 2.0$ eV.
     \item EDS subestima el Mg (relaci\'on Fe:Mg $\approx 69:1$ vs $4.6:1$ estequiom\'etrica); el Mg remanente est\'a en la fase espinela detectada por DRX.
@@ -263,7 +256,7 @@ Pr\'oximos pasos:
 \begin{itemize}
     \item Repetir la s\'intesis controlando mejor el pH y la temperatura de calcinaci\'on para aumentar la fracci\'on de espinela (objetivo: espinela mayoritaria).
     \item Cuantificar el Mg por una t\'ecnica sensible (ICP) para cerrar el balance m\'asico.
-    \item Refinar con EasyDiffraction a\~nadiendo orientaci\'on preferida (March--Dollase) y perfil TCH con t\'erminos de tama\~no/deformaci\'on separados.
+    \item Refinar con HighScore Plus a\~nadiendo orientaci\'on preferida (March--Dollase) y par\'ametros de tama\~no/deformaci\'on.
 \end{itemize}
 
 
@@ -272,7 +265,7 @@ En la siguiente figura se puede observar el montaje:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.13]{assets/:D.png}
+    \includegraphics[scale=0.13]{assets/ensayo.png}
     \caption{Montaje Experimental}
     \label{fig:Hielo}
 \end{figure}
