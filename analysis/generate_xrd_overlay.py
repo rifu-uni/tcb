@@ -101,13 +101,13 @@ C_DIFF = '#455A64'    # slate blue
 C_HEM = '#B71C1C'     # dark crimson
 C_SPINEL = '#0D47A1'  # vibrant royal blue
 
-fig, axes = plt.subplots(2, 1, figsize=(12, 11), sharex=False, gridspec_kw={'hspace': 0.24})
+fig, axes = plt.subplots(2, 1, figsize=(12, 11), sharex=False, gridspec_kw={'hspace': 0.28})
 
 # Custom staggered annotations for zero-collision layout
 ANNOTATION_CONFIG_400 = {
     (24.13, 'PH00'): (0, 160, '(012)'),
     (30.24, 'PH01'): (0, 220, '(220)'),
-    (33.13, 'PH00'): (0, 160, '(104)'),
+    (33.13, 'PH00'): (0, 180, '(104)'),
     (35.61, 'PH00'): (0.5, 180, '(110)'),
     (35.62, 'PH01'): (-0.5, 360, '(311)*'),
     (40.83, 'PH00'): (0, 160, '(113)'),
@@ -127,7 +127,7 @@ ANNOTATION_CONFIG_600 = {
     (18.30, 'PH01'): (0, 220, '(111)'),
     (24.13, 'PH00'): (0, 180, '(012)'),
     (30.12, 'PH01'): (0, 240, '(220)'),
-    (33.14, 'PH00'): (0, 180, '(104)'),
+    (33.14, 'PH00'): (0, 200, '(104)'),
     (35.48, 'PH01'): (-0.6, 380, '(311)'),
     (35.61, 'PH00'): (0.6, 180, '(110)'),
     (40.84, 'PH00'): (0, 180, '(113)'),
@@ -183,17 +183,17 @@ def plot_panel(ax, d, title, wt_hem, wt_spinel, rwp, gof, ann_config, is_600=Fal
                     fontsize=8.5, fontweight='bold', color=col,
                     arrowprops=dict(arrowstyle='-', color=col, lw=0.7, alpha=0.75))
 
+    # Generous limits so all peak labels have ample headroom without hitting borders
     ax.set_xlim(17.5 if is_600 else 19.5, 80)
-    ax.set_ylim(2100, 6500 if is_600 else 5200)
+    ax.set_ylim(2100, 7000 if is_600 else 5600)
     ax.set_ylabel('Intensidad (cuentas)', fontsize=12, fontweight='bold')
     
-    info_text = (f"$\\mathbf{{{title}}}$\n"
-                 f"● Hematita: $\\mathbf{{{wt_hem}\\%}}$ peso ($R\\bar{{3}}c$)\n"
-                 f"◆ Magnesioferrita: $\\mathbf{{{wt_spinel}\\%}}$ peso ($Fd\\bar{{3}}m$)\n"
-                 f"$R_{{wp}} = {rwp}\\%$, $\\mathrm{{GOF}} = {gof}$")
-    ax.text(0.02, 0.95, info_text, transform=ax.transAxes,
-            verticalalignment='top', fontsize=10,
-            bbox=dict(boxstyle='round,pad=0.5', facecolor='white', edgecolor='#CFD8DC', alpha=0.92))
+    # Place panel information as an elegant title outside the data area (NO collision with peaks!)
+    panel_title = (f"$\\mathbf{{{title}}}$: "
+                   f"● Hematita $\\mathbf{{{wt_hem}\\%}}$ peso ($R\\bar{{3}}c$)  |  "
+                   f"◆ Magnesioferrita $\\mathbf{{{wt_spinel}\\%}}$ peso ($Fd\\bar{{3}}m$)  —  "
+                   f"$R_{{wp}} = {rwp}\\%$, $\\mathrm{{GOF}} = {gof}$")
+    ax.set_title(panel_title, fontsize=11, fontweight='bold', loc='left', pad=10)
 
 # Plot panels
 plot_panel(axes[0], d400, "XRD1 (400 °C) — Calcinación", "96.3", "3.7", "1.46", "0.72", ANNOTATION_CONFIG_400, is_600=False)
@@ -202,7 +202,7 @@ axes[0].set_xlabel(r'Posición $2\theta$ ($^\circ$)', fontsize=11, fontweight='b
 plot_panel(axes[1], d600, "XRD2 (600 °C) — Recalcinación", "95.3", "4.7", "1.54", "0.72", ANNOTATION_CONFIG_600, is_600=True)
 axes[1].set_xlabel(r'Posición $2\theta$ ($^\circ$, radiación Cu K$\alpha$, $\lambda = 1.54060$ Å)', fontsize=12, fontweight='bold')
 
-# Legend on top panel
+# Legend on top panel (placed at upper right where peaks are small baseline, completely unobstructed)
 handles = [
     Line2D([0], [0], marker='.', color=C_OBS, lw=0, ms=6, label=r'Observado ($Y_{\mathrm{obs}}$)'),
     Line2D([0], [0], color=C_CALC, lw=1.5, label=r'Rietveld ($Y_{\mathrm{calc}}$)'),
@@ -212,8 +212,9 @@ handles = [
 ]
 axes[0].legend(handles=handles, loc='upper right', fontsize=9.5, framealpha=0.95, edgecolor='#CFD8DC')
 
-# Inset on 600 °C panel: Zoom on 29° to 37.5° region
-ax_ins = axes[1].inset_axes([0.53, 0.42, 0.44, 0.52])
+# Inset on 600 °C panel: Zoom on 29° to 37.2° region
+# Placed in the upper right quadrant of the panel (x: 52% to 96%, y: 44% to 94%)
+ax_ins = axes[1].inset_axes([0.52, 0.44, 0.45, 0.50])
 tt600 = d600['tt']
 y_obs600 = d600['y_obs']
 y_calc600 = d600['y_calc']
@@ -248,10 +249,10 @@ ax_ins.set_ylim(2750, 6400)
 ax_ins.set_title("Detalle: Pico espinela (220) y hombro (311)", fontsize=8.5, fontweight='bold', pad=4)
 ax_ins.tick_params(labelsize=7.5)
 
-# Inset indicator box
-axes[1].indicate_inset_zoom(ax_ins, edgecolor='#263238', alpha=0.5, lw=1.0)
+# Inset indicator box with clean subtle styling
+axes[1].indicate_inset_zoom(ax_ins, edgecolor='#37474F', alpha=0.4, lw=1.0)
 
-fig.subplots_adjust(left=0.08, right=0.98, top=0.96, bottom=0.065, hspace=0.24)
+fig.subplots_adjust(left=0.08, right=0.98, top=0.96, bottom=0.065, hspace=0.28)
 OUT_PNG.parent.mkdir(parents=True, exist_ok=True)
 OUT_DECK.parent.mkdir(parents=True, exist_ok=True)
 fig.savefig(OUT_PNG, dpi=300)
