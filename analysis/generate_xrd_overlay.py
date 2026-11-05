@@ -189,10 +189,11 @@ def plot_panel(ax, d, title, wt_hem, wt_spinel, rwp, gof, ann_config, is_600=Fal
     ax.set_ylabel('Intensidad (cuentas)', fontsize=12, fontweight='bold')
     
     # Place panel information as an elegant title outside the data area (NO collision with peaks!)
+    chi2_val = f"{float(gof)**2:.2f}"
     panel_title = (f"$\\mathbf{{{title}}}$: "
                    f"● Hematita $\\mathbf{{{wt_hem}\\%}}$ peso ($R\\bar{{3}}c$)  |  "
                    f"◆ Magnesioferrita $\\mathbf{{{wt_spinel}\\%}}$ peso ($Fd\\bar{{3}}m$)  —  "
-                   f"$R_{{wp}} = {rwp}\\%$, $\\mathrm{{GOF}} = {gof}$")
+                   f"$R_{{wp}} = {rwp}\\%$, $\\chi^2 = {chi2_val}$")
     ax.set_title(panel_title, fontsize=11, fontweight='bold', loc='left', pad=10)
 
 # Plot panels
@@ -224,9 +225,9 @@ ax_ins.plot(tt600[m_ins], y_obs600[m_ins], '.', color=C_OBS, ms=3.5, alpha=0.65)
 ax_ins.plot(tt600[m_ins], y_calc600[m_ins], '-', color=C_CALC, lw=1.5)
 
 # Annotate peaks in inset with carefully placed leader lines
-ax_ins.annotate("MgFe$_2$O$_4$ (220)\n30.12° (aislado)",
-                xy=(30.12, 3050), xytext=(30.12, 4000),
-                ha='center', fontsize=8, fontweight='bold', color=C_SPINEL,
+ax_ins.annotate("MgFe$_2$O$_4$ (220)\n30.12° (aislado diagnóstico)",
+                xy=(30.12, 3050), xytext=(30.25, 4150),
+                ha='left', fontsize=8, fontweight='bold', color=C_SPINEL,
                 arrowprops=dict(arrowstyle='->', color=C_SPINEL, lw=1.0))
 
 ax_ins.annotate("Hematita (104)\n33.14° (100%)",
@@ -234,7 +235,7 @@ ax_ins.annotate("Hematita (104)\n33.14° (100%)",
                 ha='center', fontsize=8, fontweight='bold', color=C_HEM,
                 arrowprops=dict(arrowstyle='->', color=C_HEM, lw=1.0))
 
-ax_ins.annotate("MgFe$_2$O$_4$ (311)\n35.48° (hombro)",
+ax_ins.annotate("MgFe$_2$O$_4$ (311)\n35.48° (convolucionado)",
                 xy=(35.48, 4000), xytext=(34.5, 5600),
                 ha='center', fontsize=8, fontweight='bold', color=C_SPINEL,
                 arrowprops=dict(arrowstyle='->', color=C_SPINEL, lw=1.0))
@@ -246,7 +247,7 @@ ax_ins.annotate("Hematita (110)\n35.61°",
 
 ax_ins.set_xlim(29.1, 37.1)
 ax_ins.set_ylim(2750, 6400)
-ax_ins.set_title("Detalle: Pico espinela (220) y hombro (311)", fontsize=8.5, fontweight='bold', pad=4)
+ax_ins.set_title("Detalle: Pico diagnóstico (220) de espinela y región (110)", fontsize=8.5, fontweight='bold', pad=4)
 ax_ins.tick_params(labelsize=7.5)
 
 # Inset indicator box with clean subtle styling
@@ -258,3 +259,56 @@ OUT_DECK.parent.mkdir(parents=True, exist_ok=True)
 fig.savefig(OUT_PNG, dpi=300)
 fig.savefig(OUT_DECK, dpi=300)
 print(f"Successfully generated {OUT_PNG} and {OUT_DECK}")
+
+# --- Generate Individual Ultra-High-Resolution Deck Hero Plots ---
+# 1. XRD1 400 °C Single Panel
+fig400, ax400 = plt.subplots(figsize=(11.5, 5.8))
+plot_panel(ax400, d400, "XRD1 (400 °C) — Calcinación", "96.3", "3.7", "1.46", "0.72", ANNOTATION_CONFIG_400, is_600=False)
+ax400.set_xlabel(r'Posición $2\theta$ ($^\circ$, radiación Cu K$\alpha$, $\lambda = 1.54060$ Å)', fontsize=12, fontweight='bold')
+ax400.legend(handles=handles, loc='upper right', fontsize=9.5, framealpha=0.95, edgecolor='#CFD8DC')
+fig400.subplots_adjust(left=0.08, right=0.98, top=0.93, bottom=0.12)
+out_400 = OUT_DECK.parent / 'xrd_highscore_400.png'
+fig400.savefig(out_400, dpi=300)
+print(f"Successfully generated {out_400}")
+
+# 2. XRD2 600 °C Single Panel (with high-detail inset)
+fig600, ax600 = plt.subplots(figsize=(11.5, 5.8))
+plot_panel(ax600, d600, "XRD2 (600 °C) — Recalcinación", "95.3", "4.7", "1.54", "0.72", ANNOTATION_CONFIG_600, is_600=True)
+ax600.set_xlabel(r'Posición $2\theta$ ($^\circ$, radiación Cu K$\alpha$, $\lambda = 1.54060$ Å)', fontsize=12, fontweight='bold')
+ax600.set_ylim(2100, 7600)  # Extra headroom so inset does not touch peak annotations
+
+# Inset on 600 °C placed high and wide
+ax_ins600 = ax600.inset_axes([0.48, 0.50, 0.49, 0.46])
+ax_ins600.plot(tt600[m_ins], y_obs600[m_ins], '.', color=C_OBS, ms=3.5, alpha=0.65)
+ax_ins600.plot(tt600[m_ins], y_calc600[m_ins], '-', color=C_CALC, lw=1.5)
+
+ax_ins600.annotate("MgFe$_2$O$_4$ (220)\n30.12° (aislado diagnóstico)",
+                   xy=(30.12, 3050), xytext=(30.25, 4150),
+                   ha='left', fontsize=8, fontweight='bold', color=C_SPINEL,
+                   arrowprops=dict(arrowstyle='->', color=C_SPINEL, lw=1.0))
+
+ax_ins600.annotate("Hematita (104)\n33.14° (100%)",
+                   xy=(33.14, 5920), xytext=(32.5, 4900),
+                   ha='center', fontsize=8, fontweight='bold', color=C_HEM,
+                   arrowprops=dict(arrowstyle='->', color=C_HEM, lw=1.0))
+
+ax_ins600.annotate("MgFe$_2$O$_4$ (311)\n35.48° (convolucionado)",
+                   xy=(35.48, 4000), xytext=(34.5, 5600),
+                   ha='center', fontsize=8, fontweight='bold', color=C_SPINEL,
+                   arrowprops=dict(arrowstyle='->', color=C_SPINEL, lw=1.0))
+
+ax_ins600.annotate("Hematita (110)\n35.61°",
+                   xy=(35.61, 4600), xytext=(36.3, 5600),
+                   ha='center', fontsize=8, fontweight='bold', color=C_HEM,
+                   arrowprops=dict(arrowstyle='->', color=C_HEM, lw=1.0))
+
+ax_ins600.set_xlim(29.1, 37.1)
+ax_ins600.set_ylim(2750, 6400)
+ax_ins600.set_title("Detalle: Pico diagnóstico (220) de espinela y región (110)", fontsize=8.5, fontweight='bold', pad=4)
+ax_ins600.tick_params(labelsize=7.5)
+ax600.indicate_inset_zoom(ax_ins600, edgecolor='#37474F', alpha=0.4, lw=1.0)
+
+fig600.subplots_adjust(left=0.08, right=0.98, top=0.93, bottom=0.12)
+out_600 = OUT_DECK.parent / 'xrd_highscore_600.png'
+fig600.savefig(out_600, dpi=300)
+print(f"Successfully generated {out_600}")
