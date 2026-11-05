@@ -20,7 +20,7 @@ ROOT = Path('.').resolve()
 CIF_400 = ROOT / 'analysis/highscore/400/400.CIF'
 CIF_600 = ROOT / 'analysis/highscore/600/600.CIF'
 OUT_PNG = ROOT / 'article/figs/xrd_highscore.png'
-OUT_DECK = ROOT / 'article/figs/deck/xrd_highscore.png'
+OUT_DECK = ROOT / 'slides/figs/xrd_highscore.png'
 
 def parse_cif(cif_path):
     with open(cif_path) as f:
